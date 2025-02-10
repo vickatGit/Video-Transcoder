@@ -1,0 +1,21 @@
+# Ignore node_modules within VideoEncodingService
+VideoEncodingService/node_modules/
+
+# Ignore Git directory
+VideoEncodingService/.git/
+
+# Ignore Docker-specific files
+.dockerignore
+Dockerfile
+
+# Ignore logs and temp files
+VideoEncodingService/*.log
+VideoEncodingService/tmp/
+
+# Ignore editor and IDE files
+VideoEncodingService/.vscode/
+VideoEncodingService/.idea/
+
+# Ignore build output
+VideoEncodingService/dist/
+VideoEncodingService/build/
