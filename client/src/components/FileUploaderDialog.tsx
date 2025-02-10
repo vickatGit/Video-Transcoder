@@ -1,8 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 
 import { bytesToHumanReadableString } from "../helpers";
-import { useDispatch } from "react-redux";
 
 export interface IAttachment {
   _id: string;
@@ -59,10 +58,7 @@ const getFileSizeMB = (size: number): number => {
 };
 
 const FileUploader = (props: Props) => {
-  const dispatch = useDispatch();
   const [attachment, setAttachment] = useState<File | undefined>(undefined);
-  const [description, setDescription] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
 
   const handleChanges = (file: File): boolean => {
     return true;
@@ -104,51 +100,7 @@ const FileUploader = (props: Props) => {
 
   const onClose = () => {
     setAttachment(undefined);
-    setDescription("");
     props.setShowUploader();
-  };
-
-  const uploadFile = () => {
-    if (!attachment) {
-      // dispatch(
-      //   addNotification({
-      //     title: "Error",
-      //     message: "Please select a file to upload!",
-      //     type: "danger",
-      //   })
-      // );
-      return;
-    }
-
-    const data = new FormData();
-    data.append("file", attachment);
-    data.append("websiteId", props.websiteId);
-
-    setIsUploading(true);
-
-    // agent.Website.addLogo(data)
-    //   .then(() => {
-    //     setIsUploading(false);
-    //     dispatch(
-    //       addNotification({
-    //         title: "Success",
-    //         message: "File uploaded successfully!",
-    //         type: "success",
-    //       })
-    //     );
-    //     props.setFileUploaded(true);
-    //     onClose();
-    //   })
-    //   .catch((res: any) => {
-    //     setIsUploading(false);
-    //     dispatch(
-    //       addNotification({
-    //         title: "Error",
-    //         message: res.response?.data?.message || "Something went wrong!",
-    //         type: "danger",
-    //       })
-    //     );
-    //   });
   };
 
   return (
@@ -330,16 +282,6 @@ const FileUploader = (props: Props) => {
                     </div>
                   </div>
 
-                  {/* <div className="mt-4">
-                  <TextAreaInput
-                    name="description"
-                    label="Description"
-                    placeholder="Add a description"
-                    disabled={props.disabled}
-                    value={description}
-                    onChange={(ev) => setDescription(ev.target.value)}
-                  />
-                </div> */}
                   <div className="mt-4 flex justify-end">
                     {attachment && (
                       <div className=" mt-2 custom-bg animate-border border overflow-hidden cursor-pointer">

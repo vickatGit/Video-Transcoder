@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-import FileUploader from "./components/FileUploaderDialog";
 import axios from "axios";
-import { io } from "socket.io-client";
-import { json } from "stream/consumers";
-import Table from "./components/Table";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "./store/store";
-import { onNotify, removeNotification } from "./store/reducers/notification";
-import NotificationList from "./components/NotificationList";
+import { io } from "socket.io-client";
 import ErrorBoundary from "./components/ErrorBoundry";
+import FileUploader from "./components/FileUploaderDialog";
+import NotificationList from "./components/NotificationList";
+import Table from "./components/Table";
+import { onNotify, removeNotification } from "./store/reducers/notification";
+import { AppDispatch, RootState } from "./store/store";
 let socketId: any = undefined;
 const socket = io(import.meta.env.VITE_SOCKET_URL, {
   path: "/api/socket.io",
@@ -27,7 +26,6 @@ export interface ResolutionData {
 function App() {
   const [showUploader, setShowUploader] = useState<boolean>(false);
   const [attachment, setAttachment] = useState<File>();
-  const [attachmentUploaded, setAttachmentUploaded] = useState<boolean>();
   const notification = useSelector((state: RootState) => state.notification);
   const dispatch = useDispatch<AppDispatch>();
   const [isAllVideoTranscoded, setAllVideoTranscoded] =
@@ -140,7 +138,6 @@ function App() {
 
   const handleUpload = async () => {
     if (!attachment) return;
-    setAttachmentUploaded(false);
 
     // Prepare the file data to be sent in a FormData object
     const formData = new FormData();
@@ -163,18 +160,14 @@ function App() {
           },
         }
       );
-      setAttachmentUploaded(true);
       console.log("video upload res : ", res);
 
       socket.emit("JOIN_TRANSCODER", res.data.videRes?._id.toString());
 
-      // setMessage("File uploaded successfully!");
       console.log(res.data);
       setAttachment(undefined);
     } catch (err) {
-      setAttachmentUploaded(false);
       console.error(err);
-      // setMessage("Error uploading file");
     }
   };
 
