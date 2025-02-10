@@ -26,6 +26,7 @@ export interface ResolutionData {
 function App() {
   const [showUploader, setShowUploader] = useState<boolean>(false);
   const [attachment, setAttachment] = useState<File>();
+  const [attachmentUploaded, setAttachmentUploaded] = useState<boolean>();
   const notification = useSelector((state: RootState) => state.notification);
   const dispatch = useDispatch<AppDispatch>();
   const [isAllVideoTranscoded, setAllVideoTranscoded] =
@@ -138,6 +139,7 @@ function App() {
 
   const handleUpload = async () => {
     if (!attachment) return;
+    setAttachmentUploaded(false);
 
     // Prepare the file data to be sent in a FormData object
     const formData = new FormData();
@@ -160,14 +162,18 @@ function App() {
           },
         }
       );
+      setAttachmentUploaded(true);
       console.log("video upload res : ", res);
 
       socket.emit("JOIN_TRANSCODER", res.data.videRes?._id.toString());
 
+      // setMessage("File uploaded successfully!");
       console.log(res.data);
       setAttachment(undefined);
     } catch (err) {
+      setAttachmentUploaded(false);
       console.error(err);
+      // setMessage("Error uploading file");
     }
   };
 
@@ -221,8 +227,7 @@ function App() {
           />
         </div>
         <div className="w-full h-fit bg-black pb-10">
-          {/* {attachmentUploaded && <Table videoResolutions={videoResolutions} />} */}
-          <Table videoResolutions={videoResolutions} />
+          {attachmentUploaded && <Table videoResolutions={videoResolutions} />}
           {attachment && (
             <div className="px-8 py-4 rel ">
               <div className="relative w-[30rem] custom-bg rounded-xl overflow-hidden animate-border">
