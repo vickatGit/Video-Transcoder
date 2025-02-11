@@ -5,6 +5,7 @@ import connectDB from "./connectDb";
 import videoRoutes from "./routes";
 import { VideoModel } from "./videoModel";
 import mongoose from "mongoose";
+import { conf } from "./config";
 
 dotenv.config(); // Load environment variables
 
@@ -45,7 +46,7 @@ const io = require("socket.io")(server, {
   path: "/api/socket.io",
   cors: {
     origin: (origin: any, callback: any) => {
-      if (origin === process.env.APP_URL) {
+      if (origin === conf().appUrl) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));

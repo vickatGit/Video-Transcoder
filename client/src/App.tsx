@@ -8,8 +8,9 @@ import NotificationList from "./components/NotificationList";
 import Table from "./components/Table";
 import { onNotify, removeNotification } from "./store/reducers/notification";
 import { AppDispatch, RootState } from "./store/store";
+import { conf } from "./config";
 let socketId: any = undefined;
-const socket = io(import.meta.env.VITE_SOCKET_URL, {
+const socket = io(conf().socketUrl, {
   path: "/api/socket.io",
   transports: ["websocket"],
   secure: true,
