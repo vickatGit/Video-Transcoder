@@ -104,7 +104,7 @@ const FileUploader = (props: Props) => {
   };
 
   return (
-    <Transition.Root show={props.showModal} as={Fragment}>
+    <Transition.Root show={props.showModal || false} as={Fragment}>
       <Dialog as="div" className="relative z-[60]" onClose={() => null}>
         <Transition.Child
           as={Fragment}
