@@ -18,6 +18,11 @@ app.use(express.json());
 connectDB(); // Connect to MongoDB
 
 // Use routes
+app.get("/", (req: any, res: any) => {
+  return res.status(200).send({
+    message: "Server Headl is Good 🚀🚀",
+  });
+});
 app.use("/api", videoRoutes);
 
 const server = app.listen(PORT, () => {
