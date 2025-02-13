@@ -27,24 +27,6 @@ app.use("/api", videoRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`⚡ Server is running on http://localhost:${PORT}`);
-  try {
-    const pipeline = [
-      {
-        $match: {
-          "documentKey._id": new mongoose.Types.ObjectId(
-            "659a6aa1064370b4a993021f"
-          ), // Filter for a specific document
-        },
-      },
-    ];
-    const changeStream = VideoModel.watch(pipeline);
-
-    changeStream.on("change", (change) => {
-      console.log("📌 Change detected:", change);
-    });
-  } catch (err) {
-    console.error("❌ Error watching document:", err);
-  }
 });
 
 const io = require("socket.io")(server, {
