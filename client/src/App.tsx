@@ -115,7 +115,7 @@ function App() {
         console.log("transcriber event ", handleVideoResUpdate(data));
       });
     });
-    axios.get(conf().socketUrl).then((res) => {
+    axios.get(conf().baseUrl).then((res) => {
       console.log("res : ", res);
     });
 
@@ -157,7 +157,7 @@ function App() {
         console.log("upload progress state : ", JSON.stringify(data, null, 4));
       });
 
-      const res = await axios.post(`${conf().socketUrl}/api/upload`, formData, {
+      const res = await axios.post(`${conf().baseUrl}/api/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
