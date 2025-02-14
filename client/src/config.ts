@@ -4,7 +4,7 @@ export const conf = (): {
   const socketUrl =
     (import.meta.env.VITE_ENV as any).toString() === "DEV"
       ? "http://localhost:8000"
-      : "https://video-transcoder-production.up.railway.app";
+      : "https://video-transcoder-acu2.onrender.com";
   return {
     socketUrl: socketUrl,
   };
