@@ -115,7 +115,9 @@ function App() {
         console.log("transcriber event ", handleVideoResUpdate(data));
       });
     });
-    axios.get(conf().socketUrl).then((res) => {});
+    axios.get(conf().socketUrl).then((res) => {
+      console.log("res : ", res);
+    });
 
     // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     //   event.preventDefault();
