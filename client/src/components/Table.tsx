@@ -22,7 +22,10 @@ const Table: React.FC<Props> = (props) => {
         <tbody>
           {Array.from(props.videoResolutions.entries()).map(([key, value]) => {
             return (
-              <tr className=" bg-gray-800/50 hover:bg-gray-700/50 border-b border-gray-600">
+              <tr
+                className=" bg-gray-800/50 hover:bg-gray-700/50 border-b border-gray-600"
+                key={key}
+              >
                 <td className="p-3 border-r border-gray-600 text-center  ">
                   <p>{key}</p>
                 </td>

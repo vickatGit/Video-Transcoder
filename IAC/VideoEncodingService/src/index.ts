@@ -57,10 +57,10 @@ type VideoCodec = {
 const videoCodecs: VideoCodec[] = [
   { resolution: "256x144", folder: "144p", videoBitrate: "80" },
   { resolution: "426x240", folder: "240p", videoBitrate: "700" },
-  // { resolution: "640x360", folder: "360p", videoBitrate: "1000" },
-  // { resolution: "854x480", folder: "480p", videoBitrate: "2500" },
-  // { resolution: "1280x720", folder: "720p", videoBitrate: "5000" },
-  // { resolution: "1920x1080", folder: "1080p", videoBitrate: "8000" },
+  { resolution: "640x360", folder: "360p", videoBitrate: "1000" },
+  { resolution: "854x480", folder: "480p", videoBitrate: "2500" },
+  { resolution: "1280x720", folder: "720p", videoBitrate: "5000" },
+  { resolution: "1920x1080", folder: "1080p", videoBitrate: "8000" },
 ];
 
 export async function startEcsTask() {

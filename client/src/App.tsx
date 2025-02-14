@@ -86,9 +86,7 @@ function App() {
     let allResTranscoded = true;
     if (videoResolutions) {
       Array.from(videoResolutions.values()).map((resolution) => {
-        if (resolution.url) {
-          allResTranscoded = resolution.url?.length > 0;
-        } else {
+        if (resolution.status !== "Done") {
           allResTranscoded = false;
         }
       });
