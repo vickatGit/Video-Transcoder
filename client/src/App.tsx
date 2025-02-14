@@ -115,6 +115,7 @@ function App() {
         console.log("transcriber event ", handleVideoResUpdate(data));
       });
     });
+    axios.get(conf().socketUrl).then((res) => {});
 
     // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     //   event.preventDefault();
@@ -154,15 +155,11 @@ function App() {
         console.log("upload progress state : ", JSON.stringify(data, null, 4));
       });
 
-      const res = await axios.post(
-        "http://localhost:8000/api/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.post(`${conf().socketUrl}/api/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setAttachmentUploaded(true);
       console.log("video upload res : ", res);
 
