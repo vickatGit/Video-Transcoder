@@ -3,14 +3,14 @@ import {
   ListObjectsV2Command,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
-import Redis from "redis";
+import { createClient } from "redis";
 
 // Initialize Redis Client
-const redisClient = Redis.createClient({
-  password: process.env.REDIS_CLOUD_PASSWORD,
+const redisClient = createClient({
+  password: process.env.REDIS_CLOUD_PASSWORD!,
   socket: {
-    host: `${process.env.REDIS_CLOUD_HOST}`,
-    port: parseInt(`${process.env.REDIS_CLOUD_PORT}`),
+    host: process.env.REDIS_CLOUD_HOST!,
+    port: parseInt(process.env.REDIS_CLOUD_PORT!),
   },
 });
 
