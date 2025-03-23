@@ -10,8 +10,9 @@ dotenv.config();
 
 /** 🔹 Initialize Redis Client */
 const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  port: Number(process.env.REDIS_PORT),
+  host: process.env.REDIS_CLOUD_HOST,
+  port: Number(process.env.REDIS_CLOUD_PORT),
+  password: process.env.REDIS_CLOUD_PASSWORD,
 });
 
 /** 🔹 Handle Redis Connection */
