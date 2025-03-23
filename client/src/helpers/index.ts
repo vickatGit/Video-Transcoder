@@ -1,33 +1,3 @@
-export const ALLOWED_TLDS = [
-  "com",
-  "net",
-  "org",
-  "info",
-  "biz",
-  "tech",
-  "app",
-  "dev",
-  "io",
-  "store",
-  "online",
-  "site",
-  "xyz",
-  "edu",
-  "gov",
-  "co",
-  "in",
-  "uk",
-  "us",
-  "ai",
-  "web",
-  "me",
-  "tv",
-  "cc",
-  "app",
-  "cloud",
-  "digital",
-];
-
 export function bytesToHumanReadableString(size: number) {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
   return (

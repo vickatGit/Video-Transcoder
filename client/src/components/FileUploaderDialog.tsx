@@ -2,6 +2,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 
 import { bytesToHumanReadableString } from "../helpers";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { onNotify } from "../store/reducers/notification";
 
 export interface IAttachment {
   _id: string;
@@ -24,28 +27,45 @@ type Props = {
 };
 
 const types = [
-  ".mp4",
-  ".mkv",
-  ".avi",
-  ".mov",
-  ".flv",
-  ".wmv",
-  ".webm",
-  ".mpeg",
-  ".mpg",
-  ".3gp",
-  ".ogv",
-  ".vob",
-  ".ts",
-  ".m4v",
-  ".rm",
-  ".asf",
+  "mp4",
+  "mkv",
+  "avi",
+  "mov",
+  "flv",
+  "wmv",
+  "webm",
+  "mpeg",
+  "mpg",
+  "3gp",
+  "ogv",
+  "vob",
+  "ts",
+  "m4v",
+  "rm",
+  "asf",
+  "f4v",
+  "f4p",
+  "f4a",
+  "f4b",
+  "m2ts",
+  "mts",
+  "mxf",
+  "svi",
+  "amv",
+  "divx",
+  "qt",
+  "yuv",
+  "rmvb",
+  "viv",
+  "nsv",
+  "mod",
 ];
 
 const maxSize = 20;
 
 const checkType = (file: File, types: Array<string>): boolean => {
   const extension = file.name.split(".").pop();
+  console.log("extension : ", extension);
   if (extension) {
     return types.includes(extension.toLowerCase());
   }
@@ -58,29 +78,29 @@ const getFileSizeMB = (size: number): number => {
 };
 
 const FileUploader = (props: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [attachment, setAttachment] = useState<File | undefined>(undefined);
 
   const handleChanges = (file: File): boolean => {
-    return true;
     if (file) {
-      if (types && !checkType(file, types)) {
-        // dispatch(
-        //   addNotification({
-        //     title: "Error",
-        //     message: "This file type is not supported!",
-        //     type: "danger",
-        //   })
-        // );
+      if (!checkType(file, types)) {
+        dispatch(
+          onNotify({
+            title: "Error",
+            message: "This file type is not supported!",
+            type: "danger",
+          })
+        );
         return false;
       }
       if (maxSize && getFileSizeMB(file.size) > maxSize) {
-        // dispatch(
-        //   addNotification({
-        //     title: "Error",
-        //     message: "Size of selected file is bigger than 1 MB!",
-        //     type: "danger",
-        //   })
-        // );
+        dispatch(
+          onNotify({
+            title: "Error",
+            message: "Size of selected file is bigger than 20 MB!",
+            type: "danger",
+          })
+        );
         return false;
       }
       return true;
