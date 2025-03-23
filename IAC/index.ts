@@ -258,6 +258,103 @@ const deployJobConsumerLambda = async (ecsConfig: {
   );
 };
 
+interface DeployCronConfig {
+  s3BucketName: string;
+  region: string;
+  redisHost?: string;
+  redisPort?: string;
+  redisPassword?: string;
+}
+
+export const deployCron = async (config: DeployCronConfig) => {
+  // IAM Role for Lambda Execution
+  const lambdaExecutionRole = new aws.iam.Role("S3CleanupLambdaExecutionRole", {
+    assumeRolePolicy: aws.iam.assumeRolePolicyForPrincipal({
+      Service: "lambda.amazonaws.com",
+    }),
+  });
+
+  // Attach necessary policies
+  new aws.iam.RolePolicyAttachment("LambdaCloudWatchPolicy", {
+    role: lambdaExecutionRole.name,
+    policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
+  });
+
+  new aws.iam.RolePolicyAttachment("LambdaS3FullAccess", {
+    role: lambdaExecutionRole.name,
+    policyArn: aws.iam.ManagedPolicies.AmazonS3FullAccess,
+  });
+
+  // Bundle Lambda Code
+  const lambdaBundlePath = "./dist/S3Cleanup/index.js";
+  esbuild.buildSync({
+    entryPoints: ["./lambdas/S3Cleanup/index.ts"], // Your Lambda entry file
+    bundle: true,
+    platform: "node",
+    target: "node18", // Match Lambda runtime version
+    outfile: lambdaBundlePath,
+    external: ["aws-sdk"], // AWS SDK is pre-installed in Lambda
+  });
+
+  // Zip the bundled file
+  await zipLambdaCode("./dist/S3Cleanup.zip", "./dist/S3Cleanup");
+
+  // Deploy Lambda Function
+  const s3CleanupLambda = new aws.lambda.Function("S3-Cleanup-Lambda", {
+    runtime: aws.lambda.Runtime.NodeJS18dX,
+    code: new pulumi.asset.FileArchive("./dist/S3Cleanup.zip"),
+    handler: "index.handler",
+    role: lambdaExecutionRole.arn,
+    timeout: 60, // 1 min timeout
+    memorySize: 512, // 512 MB RAM
+    environment: {
+      variables: {
+        S3_BUCKET_NAME: config.s3BucketName,
+        REDIS_HOST: config.redisHost || "",
+        REDIS_PORT: config.redisPort || "",
+        REDIS_PASSWORD: config.redisPassword || "",
+      },
+    },
+  });
+
+  // Create CloudWatch Event Rule to trigger Lambda every hour
+  const cloudWatchRule = new aws.cloudwatch.EventRule("S3CleanupSchedule", {
+    scheduleExpression: "cron(1 * * * ? *)", // Runs every hour 1:01, 2:01, 3:01
+  });
+
+  // Add Lambda as target for CloudWatch Event
+  new aws.cloudwatch.EventTarget("S3CleanupLambdaTarget", {
+    rule: cloudWatchRule.name,
+    arn: s3CleanupLambda.arn,
+  });
+
+  // Grant CloudWatch permission to invoke Lambda
+  new aws.lambda.Permission("AllowCloudWatchToInvokeLambda", {
+    action: "lambda:InvokeFunction",
+    function: s3CleanupLambda.name,
+    principal: "events.amazonaws.com",
+    sourceArn: cloudWatchRule.arn,
+  });
+
+  return {
+    lambdaArn: s3CleanupLambda.arn,
+    cloudWatchRuleArn: cloudWatchRule.arn,
+  };
+};
+
+transS3Bucket.id.apply((S3_BUCKET) => {
+  deployCron({
+    s3BucketName: S3_BUCKET,
+    region: "ap-south-1",
+    redisHost: process.env.REDIS_CLOUD_HOST,
+    redisPort: process.env.REDIS_CLOUD_PORT,
+    redisPassword: process.env.REDIS_CLOUD_PASSWORD,
+  }).then((output) => {
+    console.log("Lambda ARN:", output.lambdaArn);
+    console.log("CloudWatch Rule ARN:", output.cloudWatchRuleArn);
+  });
+});
+
 async function buildTranscoderService() {
   const videoTranscoderRepo = new aws.ecr.Repository("video-transcoder-repo", {
     name: "video-transcoder-service-repo",
