@@ -5,7 +5,7 @@ const ResolutionSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      enum: ["pending", "processing", "done", "failed"], // Restrict to valid values
+      enum: ["Pending", "Processing", "Done", "Failed", "Transcoding"], // Restrict to valid values
       default: "pending",
     },
     url: {

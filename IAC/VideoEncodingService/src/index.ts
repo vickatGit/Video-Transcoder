@@ -1,8 +1,4 @@
 import mongoose from "mongoose";
-// import { config } from "dotenv";
-// config();
-
-// dbConnect();
 
 import { config } from "dotenv";
 import { createClient } from "redis";
@@ -55,12 +51,19 @@ type VideoCodec = {
 
 // Resolutions
 const videoCodecs: VideoCodec[] = [
-  { resolution: "256x144", folder: "144p", videoBitrate: "80" },
-  { resolution: "426x240", folder: "240p", videoBitrate: "700" },
-  { resolution: "640x360", folder: "360p", videoBitrate: "1000" },
-  { resolution: "854x480", folder: "480p", videoBitrate: "2500" },
-  { resolution: "1280x720", folder: "720p", videoBitrate: "5000" },
-  { resolution: "1920x1080", folder: "1080p", videoBitrate: "8000" },
+  // { resolution: "256x144", folder: "144p", videoBitrate: "80" },
+  // { resolution: "426x240", folder: "240p", videoBitrate: "700" },
+  // { resolution: "640x360", folder: "360p", videoBitrate: "1000" },
+  // { resolution: "854x480", folder: "480p", videoBitrate: "2500" },
+  // { resolution: "1280x720", folder: "720p", videoBitrate: "5000" },
+  // { resolution: "1920x1080", folder: "1080p", videoBitrate: "8000" },
+
+  { resolution: "256", folder: "144p", videoBitrate: "80" },
+  { resolution: "426", folder: "240p", videoBitrate: "700" },
+  { resolution: "640", folder: "360p", videoBitrate: "1000" },
+  { resolution: "854", folder: "480p", videoBitrate: "2500" },
+  { resolution: "1280", folder: "720p", videoBitrate: "5000" },
+  { resolution: "1920", folder: "1080p", videoBitrate: "8000" },
 ];
 
 export async function startEcsTask() {
@@ -280,14 +283,14 @@ async function transcodeVideo(
       .videoCodec("libx264")
       .audioCodec("aac")
       .videoBitrate(`${videoCodec.videoBitrate}`)
-      .size(`${videoCodec.resolution}`)
+      .size(`${videoCodec.resolution}x?`)
       .on("progress", async (prog: any) => {
         console.log("progress ", prog);
         await saveResolutionToDB(
           fileName,
           videoCodec,
           "",
-          "Processing",
+          "Transcoding",
           prog.percent
         );
       })
@@ -315,7 +318,7 @@ async function saveResolutionToDB(
   fileName: string,
   videoCodec: VideoCodec,
   url: string,
-  status: "Pending" | "Processing" | "Done" | "Failed",
+  status: "Pending" | "Processing" | "Done" | "Failed" | "Transcoding",
   progress: number = 0
 ) {
   console.log("file name in save resolution to DB : ", fileName, videoCodec);
