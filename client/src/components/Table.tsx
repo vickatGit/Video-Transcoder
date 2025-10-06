@@ -49,7 +49,7 @@ const Table: React.FC<Props> = (props) => {
                         <span></span>
                       </div>
                       <p className="absolute inset-0 flex items-center justify-center text-[0.6rem] text-white font-semibold">
-                        {value.progress}%
+                        {Math.trunc(value.progress)}%
                       </p>
                     </div>
                   </div>

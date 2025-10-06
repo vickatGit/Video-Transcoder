@@ -10,6 +10,7 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "^3.734.0",
     "@aws-sdk/client-sqs": "^3.734.0",
+    "@aws-sdk/client-s3": "^3.876.0",
     "@pulumi/aws": "^6.0.0",
     "@pulumi/aws-native": "^1.24.0",
     "@pulumi/awsx": "^2.0.2",
