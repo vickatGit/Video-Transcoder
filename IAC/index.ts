@@ -310,9 +310,9 @@ export const deployCron = async (config: DeployCronConfig) => {
     environment: {
       variables: {
         S3_BUCKET_NAME: config.s3BucketName,
-        REDIS_HOST: config.redisHost || "",
-        REDIS_PORT: config.redisPort || "",
-        REDIS_PASSWORD: config.redisPassword || "",
+        REDIS_CLOUD_HOST: config.redisHost || "",
+        REDIS_CLOUD_PORT: config.redisPort || "",
+        REDIS_CLOUD_PASSWORD: config.redisPassword || "",
       },
     },
   });

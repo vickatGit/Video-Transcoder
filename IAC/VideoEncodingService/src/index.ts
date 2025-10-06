@@ -266,12 +266,14 @@ function createFile(folderPath: string): Promise<string> {
   });
 }
 
-function transcodeVideo(
+async function transcodeVideo(
   localVideoFilePath: string,
   videoCodec: VideoCodec,
   fileName: string,
   extension: string
 ): Promise<string> {
+  console.log("video transcoding started");
+  await dbConnect();
   return new Promise<string>((resolve) => {
     ffmpeg(localVideoFilePath)
       .format(`${extension}`)
@@ -279,6 +281,16 @@ function transcodeVideo(
       .audioCodec("aac")
       .videoBitrate(`${videoCodec.videoBitrate}`)
       .size(`${videoCodec.resolution}`)
+      .on("progress", async (prog: any) => {
+        console.log("progress ", prog);
+        await saveResolutionToDB(
+          fileName,
+          videoCodec,
+          "",
+          "Processing",
+          prog.percent
+        );
+      })
       .on("start", async () => {
         console.log("Transcoding Started");
         await saveResolutionToDB(fileName, videoCodec, "", "Processing");
@@ -303,17 +315,21 @@ async function saveResolutionToDB(
   fileName: string,
   videoCodec: VideoCodec,
   url: string,
-  status: "Pending" | "Processing" | "Done" | "Failed"
+  status: "Pending" | "Processing" | "Done" | "Failed",
+  progress: number = 0
 ) {
-  console.log("file name in save resolution to DB : ", fileName);
+  console.log("file name in save resolution to DB : ", fileName, videoCodec);
   try {
     const videoRes = await VideoModel.findOne({ videoName: fileName });
-    if (!videoRes) return;
+    if (!videoRes) {
+      console.log("could not find video");
+      return;
+    }
     // Update the resolution map
     videoRes.resolutions.set(videoCodec.folder, {
       url: url || "",
       status: status || "Pending",
-      progress: status === "Done" ? 100 : 0,
+      progress: status === "Done" ? 100 : progress,
     });
 
     // Save the updated document

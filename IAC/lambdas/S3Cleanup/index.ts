@@ -25,6 +25,7 @@ const FOLDERS = ["1080", "720", "480", "360", "240", "144"];
 export const handler = async () => {
   try {
     console.log("Starting S3 cleanup...");
+    await redisClient.connect(); // ✅ Important
 
     for (const folder of FOLDERS) {
       const params = { Bucket: BUCKET_NAME, Prefix: folder + "/" };
@@ -45,7 +46,8 @@ export const handler = async () => {
     }
 
     // Keep Redis Connection Alive
-    redisClient.set("keep-alive", Date.now().toString());
+    await redisClient.set("keep-alive", Date.now().toString());
+    
 
     console.log("S3 Cleanup Completed.");
   } catch (error) {

@@ -10,6 +10,7 @@ import { ioSocket } from "..";
 import { VideoModel } from "../videoModel";
 
 router.post("/upload", upload.single("file"), async (req: any, res: any) => {
+  console.log("got upload request ");
   try {
     const s3 = new S3Client({
       region: process.env.AWS_REGION,
@@ -73,9 +74,11 @@ router.post("/upload", upload.single("file"), async (req: any, res: any) => {
     // Start the upload
     const data = await parallelUploads3.done();
     return res.json({ message: "File uploaded successfully", videRes });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error uploading to S3:", error);
-    return res.status(500).send(error);
+    return error.message
+      ? res.status(500).send(error.message)
+      : res.status(500).send(error);
   }
 });
 

@@ -26,7 +26,7 @@ export interface ResolutionData {
 
 function App() {
   const [showUploader, setShowUploader] = useState<boolean>(false);
-  const [attachment, setAttachment] = useState<File>();
+  const [attachment, setAttachment] = useState<File | null>();
   const [attachmentUploaded, setAttachmentUploaded] = useState<boolean>();
   const notification = useSelector((state: RootState) => state.notification);
   const dispatch = useDispatch<AppDispatch>();
@@ -142,13 +142,17 @@ function App() {
   const handleUpload = async () => {
     if (!attachment) return;
     setAttachmentUploaded(false);
+    console.log("upload file received");
 
     // Prepare the file data to be sent in a FormData object
     const formData = new FormData();
     formData.append("file", attachment);
 
     try {
-      if (!socketId) return;
+      if (!socketId) {
+        console.log("socket id null");
+        return;
+      }
       formData.append("socketId", socketId.toString());
       socket.on("upload_progress", (data) => {
         setProgress(data.progress);
@@ -168,10 +172,21 @@ function App() {
       // setMessage("File uploaded successfully!");
       console.log(res.data);
       setAttachment(undefined);
-    } catch (err) {
+    } catch (err: any) {
       setAttachmentUploaded(false);
+      setAttachment(null);
       console.error(err);
-      // setMessage("Error uploading file");
+      console.log("error: received", err);
+
+      dispatch(
+        onNotify({
+          title: "Failed to Upload video",
+          type: "danger",
+          message:
+            err?.response?.data ||
+            "Internal error occurred while uploading your video",
+        })
+      );
     }
   };
 
