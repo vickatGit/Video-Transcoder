@@ -34,12 +34,12 @@ router.post("/upload", upload.single("file"), async (req: any, res: any) => {
       videoName: fileName,
       ext: extension,
       resolutions: {
-        "144p": { status: "pending", url: "", progress: 0 },
-        "240p": { status: "pending", url: "", progress: 0 },
-        "360p": { status: "pending", url: "", progress: 0 },
-        "480p": { status: "pending", url: "", progress: 0 },
-        "720p": { status: "pending", url: "", progress: 0 },
-        "1080p": { status: "pending", url: "", progress: 0 },
+        "144p": { status: "Pending", url: "", progress: 0 },
+        "240p": { status: "Pending", url: "", progress: 0 },
+        "360p": { status: "Pending", url: "", progress: 0 },
+        "480p": { status: "Pending", url: "", progress: 0 },
+        "720p": { status: "Pending", url: "", progress: 0 },
+        "1080p": { status: "Pending", url: "", progress: 0 },
       },
     });
 
